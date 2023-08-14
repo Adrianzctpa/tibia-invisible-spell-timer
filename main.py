@@ -13,6 +13,14 @@ SPELLS = {
     'Test': 30
 }
 
+def set_running(val: bool):
+    global IS_RUNNING
+    IS_RUNNING = val
+
+def set_spell(spell: str):
+    global CHOSEN_SPELL
+    CHOSEN_SPELL = spell
+
 # You may change your config here
 key = '<shift>+r'
 exitKey = '<ctrl>+e'
@@ -28,6 +36,9 @@ def play():
         call(['aplay', 'sound.wav'])
 
 def main():
+    global IS_RUNNING
+    global CHOSEN_SPELL
+
     window = tk.Tk()
     window.title("Timer")
     window.geometry("800x600")
@@ -43,34 +54,28 @@ def main():
             if isinstance(child, tk.Button):
                 child.configure(state='normal')
 
-    def create_spell_button(window, spell):
+    def create_spell_button(window, spell: str):
         button = tk.Button(window, text=spell, command=lambda: on_press(spell))
         button.pack(pady=10)
 
     def on_press(spell: str):
         disable_buttons()
-        global IS_RUNNING
-        global CHOSEN_SPELL
 
-        IS_RUNNING = True
-        CHOSEN_SPELL = spell
+        set_running(True)
+        set_spell(spell)
 
-        seconds = SPELLS[spell]
+        seconds = SPELLS[CHOSEN_SPELL]
         countdown(seconds - SAFE_TIMER)
         
         if IS_RUNNING:
             TIME.set("00:00")
             play()
 
-        
         enable_buttons()
 
     def on_stop_press():
-        global IS_RUNNING
-        global CHOSEN_SPELL
-
-        IS_RUNNING = False
-        CHOSEN_SPELL = None
+        set_running(False)
+        set_spell(None)
 
         enable_buttons()
 
@@ -79,8 +84,7 @@ def main():
         on_stop_press()
 
     def countdown(seconds: int): 
-        global IS_RUNNING
-        while seconds > 0:
+        while seconds:
             if not IS_RUNNING:
                 break
 

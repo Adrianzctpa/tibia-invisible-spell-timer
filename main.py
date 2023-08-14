@@ -1,4 +1,3 @@
-from pynput import keyboard as kb
 import time
 from subprocess import call
 import tkinter as tk
@@ -10,7 +9,6 @@ SPELLS = {
     'Invisible': 200,
     'Magic Shield': 180,
     'Conjure Wand of Darkness': 900,
-    'Test': 30
 }
 
 def set_running(val: bool):
@@ -21,10 +19,13 @@ def set_spell(spell: str):
     global CHOSEN_SPELL
     CHOSEN_SPELL = spell
 
-# You may change your config here
-key = '<shift>+r'
-exitKey = '<ctrl>+e'
+### You may change your config here
+key = 'Shift+R'
+exitKey = 'Esc'
 beep = True
+
+# Quick spell for hotkey
+QUICK_SPELL = 'Invisible'
 
 # Will be used to warn player before spells runs out
 SAFE_TIMER = 20
@@ -42,7 +43,16 @@ def main():
     window = tk.Tk()
     window.title("Timer")
     window.geometry("800x600")
-    window.configure(background='lightgray')
+
+    menu = tk.Menu(window)
+    m1 = tk.Menu(menu, tearoff=0)
+    m1.add_command(label='Reset', command=lambda: on_reset_press(), accelerator=exitKey)
+    m1.add_command(label='Quick Spell', command=lambda: on_press(QUICK_SPELL), accelerator=key)
+    menu.add_cascade(label='Options', menu=m1)
+    window.config(menu=menu)
+
+    window.bind('<Escape>', lambda e: on_reset_press())
+    window.bind('<Shift-R>', lambda e: on_press(QUICK_SPELL))
 
     def disable_buttons():
         for child in window.winfo_children():
@@ -56,7 +66,7 @@ def main():
 
     def create_spell_button(window, spell: str):
         button = tk.Button(window, text=spell, command=lambda: on_press(spell))
-        button.pack(pady=10)
+        button.pack(pady=10, padx=10)
 
     def on_press(spell: str):
         disable_buttons()
@@ -71,7 +81,7 @@ def main():
             TIME.set("00:00")
             play()
 
-        enable_buttons()
+        on_stop_press()
 
     def on_stop_press():
         set_running(False)
@@ -109,8 +119,8 @@ def main():
 
     reset_button = tk.Button(window, text="Reset", command=lambda : on_reset_press())
     reset_button.pack(pady=10)
-
+    
     window.mainloop()
-        
+    
 if __name__ == '__main__':
     main()

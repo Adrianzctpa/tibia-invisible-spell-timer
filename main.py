@@ -37,10 +37,6 @@ def play():
     else:
         call(['aplay', 'sound.wav'])
 
-def calc_magic_shield(level: int, magic_level: int):
-    calculation = 300 + (7.6 * level) + (7 * magic_level)
-    return math.ceil(calculation)
-
 def main():
     global IS_RUNNING
     global CHOSEN_SPELL
@@ -115,29 +111,6 @@ def main():
 
     timer_label = tk.Label(window, textvariable=TIME, font=("Arial Bold", 50), fg="black")
     timer_label.pack(pady=10)
-
-    magic_shield_label = tk.Label(window, text="Magic Shield Capacity: ", font=("Arial Bold", 20), fg="black")
-    magic_shield_label.pack(pady=10)
-
-    level_label = tk.Label(window, text="Level: ", fg="black")
-    level_label.pack(pady=10)
-    
-    level_input = tk.Entry(window, width=10)
-    level_input.pack(pady=10)
-
-    magic_level_label = tk.Label(window, text="Magic Level: ", fg="black")
-    magic_level_label.pack(pady=10)
-    
-    magic_level_input = tk.Entry(window, width=10)
-    magic_level_input.pack(pady=10)
-
-    def on_calc_press():
-        level = int(level_input.get())
-        magic_level = int(magic_level_input.get())
-        magic_shield_label.configure(text="Magic Shield Capacity: " + str(calc_magic_shield(level, magic_level)))
-
-    calc_button = tk.Button(window, text="Calculate", command=lambda : on_calc_press())
-    calc_button.pack(pady=10)
 
     for spell in SPELLS:
         create_spell_button(window, spell)
